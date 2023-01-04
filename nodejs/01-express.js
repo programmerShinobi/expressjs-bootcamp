@@ -4,13 +4,15 @@ const app = express();
 
 const port = process.env.port || 3001;
 
+app.get('/', (req, res) => {
+    res.set("Content-Type", "application/json")
+        .send({
+            batch: "Batch#1",
+            bootcamp: ["NodeJS", "codeXacademy"]
+        });
+});
+
 app.listen(port, () => { `Server listening on port ${port}` });
 
 console.info(`Server listening on port ${port}`);
 
-app.get('/', (req, res) => {
-    res.send(JSON.stringify({
-        batch: "Batch#1",
-        bootcamp: ["NodeJS", "codeXacademy"]
-    }));
-});
