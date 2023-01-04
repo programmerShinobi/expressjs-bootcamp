@@ -13,9 +13,17 @@ const pool = new Pool({
 
 const port = process.env.port || 3001;
 
-app.listen(port, () => { `Server listening on port ${port}` });
+app.listen(port, () => {
+    console.log(`Server listening on port ${port}`);
+});
 
-console.info(`Server listening on port ${port}`);
+app.get('/', (req, res) => {
+    res.set("Content-Type", "application/json")
+        .send(JSON.stringify({
+            batch: "Batch#1",
+            bootcamp: ["NodeJS", "codeXacademy"]
+        }));
+});
 
 // buat CRUD with SQL : table regions
 app.get("/api/v1/regions", (req, res) => {
