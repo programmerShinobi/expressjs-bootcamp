@@ -1,4 +1,4 @@
-import { sequelize } from "../models/init-models"
+import { sequelize } from "../models/init-models";
 
 const findAllRegions = async (req, res) => {
     const result = await sequelize.query('SELECT * FROM regions', {
