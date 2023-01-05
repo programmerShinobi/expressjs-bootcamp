@@ -42,6 +42,11 @@ const findRegionRowsById = async (req, res) => {
         const result = await req.context.models.regions.findByPk(req.params.id, {
             attributes: ['region_id', 'region_name']
         });
+
+        if (result.length === 0) {
+            return res.status(400).send('No data changed');
+        }
+
         return res.send({
             message: "Data displayed successfully",
             results: result
@@ -61,7 +66,8 @@ const CreateRegions = async (req, res) => {
         const result = await req.context.models.regions.create({
             region_id: req.body.region_id,
             region_name: req.body.region_name
-        })
+        });
+
         return res.send({
             message: "Data inserted successfully",
             result
@@ -92,7 +98,7 @@ const UpdateRegions = async (req, res) => {
         // return res.send(result);
         return res.send({
             message: "Data updated successfully",
-            result
+            results: result[1][0]
         });
     } catch (err) {
         return res.status(500)
@@ -137,7 +143,7 @@ const regionJoinCountries = async (req, res) => {
 
         return res.send({
             message: "Succeed displays all data join to countries",
-            result
+            results: result[0]
         });
     } catch (err) {
         return res.status(500)
