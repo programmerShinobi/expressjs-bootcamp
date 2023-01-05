@@ -8,3 +8,15 @@ Each lesson has it's own branch. To see the code for a lesson, select that lesso
 
 ## Reference
 All the course files for the Express JS tutorial on site [Code X Academy](https://www.codex.academy/).
+
+## Project Setup
+
+```sh
+npm install
+```
+
+## Run Project
+
+```sh
+npm start
+```
