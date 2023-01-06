@@ -2,6 +2,7 @@ import { Router } from "express";
 import regionsController from "../controller/regionsController";
 import usersController from "../controller/usersController";
 import auth from "../auth/login-new";
+
 // import countriesController from "../controller/countriesController";
 // import departmentsContoller from "../controller/departmentsContoller";
 // import employeesController from "../controller/employeesController";

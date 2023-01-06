@@ -30,6 +30,10 @@ module.exports = function(sequelize, DataTypes) {
     user_email: {
       type: DataTypes.TEXT,
       allowNull: true
+    },
+    refresh_token: {
+      type: DataTypes.TEXT,
+      allowNull: true
     }
   }, {
     sequelize,

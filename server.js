@@ -1,27 +1,27 @@
-import "dotenv/config"
-import express from "express"
-import models, { sequelize } from "./models/init-models"
-import routes from "./routes/indexRoutes"
+import "dotenv/config";
+import express from "express";
+import models, { sequelize } from "./models/init-models";
+import routes from "./routes/indexRoutes";
 
-const port = process.env.port || 3001
+const port = process.env.port || 3001;
 
-const app = express()
+const app = express();
 
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }))
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.use(async (req, res, next) => {
     req.context = { models };
     next();
 });
 
-app.use(routes)
+app.use(routes);
 
 const dropDatabaseSync = false;
 sequelize.sync({ force: dropDatabaseSync })
     .then(() => {
         console.info("Database do not drop")
-    })
+    });
 
 // app.use('/eshopay/', (req, res) => {
 //     res.set("Content-Type", "application/json")
@@ -34,4 +34,4 @@ sequelize.sync({ force: dropDatabaseSync })
 
 app.listen(port, () => {
     console.info(`Success! ${port}`)
-})
+});
