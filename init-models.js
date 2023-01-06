@@ -1,12 +1,3 @@
-var DataTypes = require("sequelize").DataTypes;
-var _countries = require("./countries");
-var _departments = require("./departments");
-var _employees = require("./employees");
-var _job_history = require("./job_history");
-var _jobs = require("./jobs");
-var _locations = require("./locations");
-var _regions = require("./regions");
-
 import { Sequelize } from "sequelize";
 const sequelize = new Sequelize(
   process.env.DATABASE,
@@ -23,6 +14,16 @@ const sequelize = new Sequelize(
   }
 );
 
+var DataTypes = require("sequelize").DataTypes;
+var _countries = require("./countries");
+var _departments = require("./departments");
+var _employees = require("./employees");
+var _job_history = require("./job_history");
+var _jobs = require("./jobs");
+var _locations = require("./locations");
+var _regions = require("./regions");
+var _users = require("./users");
+
 const initModels = (sequelize) => {
   var countries = _countries(sequelize, DataTypes);
   var departments = _departments(sequelize, DataTypes);
@@ -31,6 +32,7 @@ const initModels = (sequelize) => {
   var jobs = _jobs(sequelize, DataTypes);
   var locations = _locations(sequelize, DataTypes);
   var regions = _regions(sequelize, DataTypes);
+  var users = _users(sequelize, DataTypes);
 
   locations.belongsTo(countries, { as: "country", foreignKey: "country_id" });
   countries.hasMany(locations, { as: "locations", foreignKey: "country_id" });
@@ -55,6 +57,7 @@ const initModels = (sequelize) => {
     jobs,
     locations,
     regions,
+    users,
   };
 }
 // module.exports = initModels;

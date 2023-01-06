@@ -9,11 +9,27 @@ module.exports = function(sequelize, DataTypes) {
     },
     user_username: {
       type: DataTypes.STRING(60),
-      allowNull: false
+      allowNull: true
     },
     user_password: {
       type: DataTypes.TEXT,
-      allowNull: false
+      allowNull: true
+    },
+    user_firstname: {
+      type: DataTypes.STRING(150),
+      allowNull: true
+    },
+    user_middlename: {
+      type: DataTypes.STRING(150),
+      allowNull: true
+    },
+    user_lastname: {
+      type: DataTypes.STRING(150),
+      allowNull: true
+    },
+    user_email: {
+      type: DataTypes.TEXT,
+      allowNull: true
     }
   }, {
     sequelize,
