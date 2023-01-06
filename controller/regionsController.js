@@ -1,10 +1,10 @@
-import { sequelize } from "../models/init-models";
+import models, { sequelize } from "../models/init-models";
 
 const findAllRegions = async (req, res) => {
     try {
         const result = await sequelize.query('SELECT * FROM regions', {
             type: sequelize.QueryTypes.SELECT,
-            model: req.context.models.regions,
+            model: models.regions,
             mapToModel: true
         });
         return res.send({
@@ -22,7 +22,7 @@ const findAllRegions = async (req, res) => {
 
 const findAllRegionsRows = async (req, res) => {
     try {
-        const result = await req.context.models.regions.findAll();
+        const result = await models.regions.findAll();
         return res.send({
             message: "Data displayed successfully",
             results: result
@@ -39,7 +39,7 @@ const findAllRegionsRows = async (req, res) => {
 
 const findRegionRowsById = async (req, res) => {
     try {
-        const result = await req.context.models.regions.findByPk(req.params.id, {
+        const result = await models.regions.findByPk(req.params.id, {
             attributes: ['region_id', 'region_name']
         });
 
@@ -62,29 +62,27 @@ const findRegionRowsById = async (req, res) => {
 }
 
 const CreateRegions = async (req, res) => {
-    try {
-        const result = await req.context.models.regions.create({
-            region_id: req.body.region_id,
-            region_name: req.body.region_name
-        });
-
+    await models.regions.create({
+        region_id: req.body.region_id,
+        region_name: req.body.region_name
+    }).then(result => {
         return res.send({
             message: "Data inserted successfully",
-            result
+            results: result
         });
-    } catch (err) {
+    }).catch(err => {
         return res.status(500)
             .send({
                 error: err.name,
                 message: err.message
             });
-    }
+    });
 
 }
 
 const UpdateRegions = async (req, res) => {
     try {
-        const result = await req.context.models.regions.update({
+        const result = await models.regions.update({
             region_name: req.body.region_name
         }, {
             returning: true,
@@ -111,32 +109,29 @@ const UpdateRegions = async (req, res) => {
 }
 
 const DeleteRegions = async (req, res) => {
-    try {
-        const id = req.params.id;
-
-        await req.context.models.regions.destroy({
-            where: { region_id: id }
-        });
-
+    const id = req.params.id;
+    await models.regions.destroy({
+        where: { region_id: id }
+    }).then(id => {
         return res.send({
             message: "Data deleted successfully",
             region_id: id
         });
-    } catch (err) {
+    }).catch(err => {
         return res.status(500)
             .send({
                 error: err.name,
                 message: err.message
             });
-    }
+    });
 }
 
 
 const regionJoinCountries = async (req, res) => {
     try {
-        const result = await req.context.models.regions.findAll({
+        const result = await models.regions.findAll({
             include: [{
-                model: req.context.models.countries,
+                model: models.countries,
                 as: "countries"
             }]
         });

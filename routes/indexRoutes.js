@@ -1,11 +1,17 @@
 import { Router } from "express";
 import regionsController from "../controller/regionsController";
+import usersController from "../controller/usersController";
 // import countriesController from "../controller/countriesController";
 // import departmentsContoller from "../controller/departmentsContoller";
 // import employeesController from "../controller/employeesController";
 // import locationsController from "../controller/locationsController";
 
 const router = new Router();
+// users
+router.post('/users', usersController.CreateUsers);
+router.get('/users', usersController.findAllUsers);
+
+
 // regions
 router.get('/regions/sql', regionsController.findAllRegions);
 router.get('/regions/', regionsController.findAllRegionsRows);
