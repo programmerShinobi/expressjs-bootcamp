@@ -31,20 +31,37 @@ const CreateUsers = async (req, res) => {
 }
 
 const findAllUsers = async (req, res) => {
-    try {
-        const result = await models.users.findAll();
-        return res.send({
-            message: "Data displayed successfully",
-            results: result
+    await models.users.findAll()
+        .then(result => {
+            return res.send({
+                message: "Data displayed successfully",
+                results: result
+            })
+        })
+        .catch(err => {
+            return res.status(500)
+                .send({
+                    error: err.name,
+                    message: err.message
+                });
         });
+}
 
-    } catch (err) {
-        return res.status(500)
-            .send({
-                error: err.name,
-                message: err.message
-            });
-    }
+const findUserRowsById = async (req, res) => {
+    await models.users.findByPk(req.params.id)
+        .then(result => {
+            return res.send({
+                message: "Data displayed successfully",
+                results: result
+            })
+        })
+        .catch(err => {
+            return res.status(500)
+                .send({
+                    error: err.name,
+                    message: err.message
+                });
+        });
 }
 
 const findAllRowsByUsername = async (callback, users) => {
@@ -66,5 +83,6 @@ const findAllRowsByUsername = async (callback, users) => {
 module.exports = {
     CreateUsers,
     findAllUsers,
+    findUserRowsById,
     findAllRowsByUsername
 }

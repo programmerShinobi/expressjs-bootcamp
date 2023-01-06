@@ -15,7 +15,7 @@ router.post('/login', auth.userLogin);
 // users
 router.post('/users', usersController.CreateUsers);
 router.get('/users', usersController.findAllUsers);
-
+router.get('/users/:id', usersController.findUserRowsById)
 
 // regions
 router.get('/regions/sql', regionsController.findAllRegions);
