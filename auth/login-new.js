@@ -28,7 +28,7 @@ const userLogin = (req, res) => {
             ResponseHelper.sendResponse(res, 404); // "User not found" --- Not Found
 
         }
-    }, data.uname);
+    }, data.username);
 };
 
 export default {
