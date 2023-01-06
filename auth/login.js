@@ -3,19 +3,17 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import authConfig from "../config/auth";
 import ResponseHelper from "../helpers/ResponseHelper";
-import models, { sequelize } from "../models/init-models";
 
 const userLogin = (req, res) => {
     let data = req.body;
     usersController.findAllRowsByUsername(function (items) {
         const payload = items[0];
-        const secretKey = 'my-secret-key';
         if (items.length > 0) {
             if (bcrypt.compareSync(data.password, payload.password)) {
 
                 var token = 'Bearer ' + jwt.sign({
                     user_id: payload.user_id
-                }, secretKey, {
+                }, authConfig.secretkey, {
                     expiresIn: 86400 //24h expired
                 });
 
