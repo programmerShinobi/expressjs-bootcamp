@@ -1,15 +1,23 @@
 import models, { sequelize } from "../models/init-models";
 
 const CreateRegions = async (req, res) => {
-    const regionName = models.regions.findAll({
-        returning: true,
-        where: { region_name: req.body.region_name }
+    const findAllRowsByRegionName = await models.regions.findAll(
+        { attributes: ['region_name'] }
+    ).then(result => {
+        return result;
+    });
+
+    let regionName;
+    findAllRowsByRegionName.forEach(function (row) {
+        if (row.region_name == req.body.region_name) {
+            regionName = row.region_name;
+        }
     });
 
     if (regionName) {
         return res.status(401).send({
-            message: `FAILED! ${req.body.region_name} (region_name) has been used`
-        });
+            message: regionName + `FAILED! ${req.body.region_name} (region_name) has been used`
+        })
     } else if (req.body.region_id == "") {
         return res.status(401).send({
             message: "FAILED! region_id is not null"
