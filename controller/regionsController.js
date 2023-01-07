@@ -16,7 +16,7 @@ const CreateRegions = async (req, res) => {
 
     if (regionName) {
         return res.status(401).send({
-            message: regionName + `FAILED! ${req.body.region_name} (region_name) has been used`
+            message: `FAILED! ${regionName} (region_name) has been used`
         })
     } else if (req.body.region_id == "") {
         return res.status(401).send({
