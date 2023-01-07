@@ -64,6 +64,12 @@ const findAllUsers = async (req, res) => {
 const findUsersRowsById = async (req, res) => {
     await models.users.findByPk(req.params.id)
         .then(result => {
+            if (result == 0 || result == null) {
+                return res.status(404).send({
+                    message: "Data not found"
+                });
+            }
+
             return res.send({
                 message: "Data displayed successfully",
                 results: result

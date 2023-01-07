@@ -1,66 +1,5 @@
 import models, { sequelize } from "../models/init-models";
 
-const findAllRegions = async (req, res) => {
-    try {
-        const result = await sequelize.query('SELECT * FROM regions', {
-            type: sequelize.QueryTypes.SELECT,
-            model: models.regions,
-            mapToModel: true
-        });
-        return res.send({
-            message: "Data displayed successfully",
-            results: result
-        });
-    } catch (err) {
-        return res.status(500)
-            .send({
-                error: err.name,
-                message: err.message
-            });
-    }
-}
-
-const findAllRegionsRows = async (req, res) => {
-    try {
-        const result = await models.regions.findAll();
-        return res.send({
-            message: "Data displayed successfully",
-            results: result
-        });
-
-    } catch (err) {
-        return res.status(500)
-            .send({
-                error: err.name,
-                message: err.message
-            });
-    }
-}
-
-const findRegionRowsById = async (req, res) => {
-    try {
-        const result = await models.regions.findByPk(req.params.id, {
-            attributes: ['region_id', 'region_name']
-        });
-
-        if (result.length === 0) {
-            return res.status(400).send('No data changed');
-        }
-
-        return res.send({
-            message: "Data displayed successfully",
-            results: result
-        });
-
-    } catch (err) {
-        return res.status(500)
-            .send({
-                error: err.name,
-                message: err.message
-            });
-    }
-}
-
 const CreateRegions = async (req, res) => {
     await models.regions.create({
         region_id: req.body.region_id,
@@ -78,6 +17,64 @@ const CreateRegions = async (req, res) => {
             });
     });
 
+}
+
+const findAllRegions = async (req, res) => {
+    await sequelize.query('SELECT * FROM regions', {
+        type: sequelize.QueryTypes.SELECT,
+        model: models.regions,
+        mapToModel: true
+    }).then(result => {
+        return res.send({
+            message: "Data displayed successfully",
+            results: result
+        });
+    }).catch(err => {
+        return res.status(500)
+            .send({
+                error: err.name,
+                message: err.message
+            });
+    });
+}
+
+const findAllRegionsRows = async (req, res) => {
+    await models.regions.findAll()
+        .then(result => {
+            return res.send({
+                message: "Data displayed successfully",
+                results: result
+            });
+        }).catch(err => {
+            return res.status(500)
+                .send({
+                    error: err.name,
+                    message: err.message
+                });
+        });
+}
+
+const findRegionRowsById = async (req, res) => {
+    await models.regions.findByPk(req.params.id, {
+        attributes: ['region_id', 'region_name']
+    }).then(result => {
+        if (result == 0 || result == null) {
+            return res.status(404).send({
+                message: "Data not found"
+            });
+        }
+
+        return res.send({
+            message: "Data displayed successfully",
+            results: result
+        });
+    }).catch(err => {
+        return res.status(500)
+            .send({
+                error: err.name,
+                message: err.message
+            });
+    });
 }
 
 const UpdateRegions = async (req, res) => {
