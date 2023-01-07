@@ -1,28 +1,32 @@
 import models, { sequelize } from "../models/init-models";
 
 const CreateRegions = async (req, res) => {
-    if (req.body.region_id == "") {
+    const regionName = models.regions.findAll({
+        returning: true,
+        where: { region_name: req.body.region_name }
+    });
+
+    if (regionName) {
         return res.status(401).send({
-            message: "region_id is not null"
+            message: `FAILED! ${req.body.region_name} (region_name) has been used`
+        });
+    } else if (req.body.region_id == "") {
+        return res.status(401).send({
+            message: "FAILED! region_id is not null"
         });
     } else if (req.body.region_name == "") {
         return res.status(401).send({
-            message: "region_name is not null"
+            message: "FAILED! region_name is not null"
         });
     } else {
         await models.regions.create({
             region_id: req.body.region_id,
             region_name: req.body.region_name
         }).then(result => {
-            if (result.length === 0) {
-                return res.status(401)
-                    .send({ message: 'No data changed' });
-            } else {
-                return res.send({
-                    message: "Data inserted successfully",
-                    results: result
-                });
-            }
+            return res.send({
+                message: "SUCCESS! Data inserted successfully",
+                results: result
+            });
         }).catch(err => {
             return res.status(500)
                 .send({
@@ -133,11 +137,11 @@ const regionJoinCountries = async (req, res) => {
 const UpdateRegions = async (req, res) => {
     if (req.body.region_id == "") {
         return res.status(401).send({
-            message: "region_id is not null"
+            message: "FAILED! region_id is not null"
         });
     } else if (req.body.region_name == "") {
         return res.status(401).send({
-            message: "region_name is not null"
+            message: "FAILED! region_name is not null"
         });
     } else {
         await models.regions.update({
@@ -148,10 +152,10 @@ const UpdateRegions = async (req, res) => {
         }).then(result => {
             if (result[1][0].length === 0) {
                 return res.status(401)
-                    .send({ message: 'No data changed' });
+                    .send({ message: 'FAILED! No data changed' });
             } else {
                 return res.send({
-                    message: "Data updated successfully",
+                    message: "SUCCESS! Data updated successfully",
                     results: result[1][0]
                 });
             }
@@ -167,18 +171,14 @@ const UpdateRegions = async (req, res) => {
 }
 
 const DeleteRegions = async (req, res) => {
-    const id = req.params.id;
-    const regionID = models.regions.findByPk(id);
-    if (regionID === 1) {
-        return res.status(404).send({
-            message: "Data not found"
-        });
-    } else {
+    // const id = req.params.id;
+    const regionID = await models.regions.findByPk(req.params.id);
+    if (regionID) {
         await models.regions.destroy({
-            where: { region_id: id }
+            where: { region_id: req.params.id }
         }).then(id => {
             return res.send({
-                message: "Data deleted successfully",
+                message: "SUCCESS! Data deleted successfully",
                 region_id: id
             });
         }).catch(err => {
@@ -187,6 +187,10 @@ const DeleteRegions = async (req, res) => {
                     error: err.name,
                     message: err.message
                 });
+        });
+    } else {
+        return res.status(404).send({
+            message: "FAILED! Data not found"
         });
     }
 }

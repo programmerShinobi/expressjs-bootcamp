@@ -4,19 +4,19 @@ import bcrypt from 'bcrypt';
 const CreateUsers = async (req, res) => {
     if (req.body.username == "") {
         return res.status(401).send({
-            message: "Username is not null"
+            message: "FAILED! Username is not null"
         });
     } else if (req.body.password == "") {
         return res.status(401).send({
-            message: "Password is not null"
+            message: "FAILED! Password is not null"
         });
     } else if (req.body.user_firstname == "") {
         return res.status(401).send({
-            message: "User_firstname is not null"
+            message: "FAILED! User_firstname is not null"
         });
     } else if (req.body.user_email == "") {
         return res.status(401).send({
-            message: "User_email is not null"
+            message: "FAILED! User_email is not null"
         });
     } else {
         const salt = await bcrypt.genSalt(10);
@@ -33,15 +33,12 @@ const CreateUsers = async (req, res) => {
             user_lastname: req.body.user_lastname,
             user_email: req.body.user_email
         }).then(result => {
-            if (result[1][0].length === 0) {
-                return res.status(401)
-                    .send({ message: 'No data changed' });
-            } else {
-                return res.send({
-                    message: "Data inserted successfully",
-                    results: result
-                });
-            }
+
+            return res.send({
+                message: "SUCCESS! Data inserted successfully",
+                results: result
+            });
+
         }).catch(err => {
             return res.status(500).send({
                 error: err.name,
@@ -102,19 +99,19 @@ const findUsersRowsById = async (req, res) => {
 const UpdateUsers = async (req, res) => {
     if (req.body.username == "") {
         return res.status(401).send({
-            message: "Username is not null"
+            message: "FAILED! Username is not null"
         });
     } else if (req.body.password == "") {
         return res.status(401).send({
-            message: "Password is not null"
+            message: "FAILED! Password is not null"
         });
     } else if (req.body.user_firstname == "") {
         return res.status(401).send({
-            message: "User_firstname is not null"
+            message: "FAILED! User_firstname is not null"
         });
     } else if (req.body.user_email == "") {
         return res.status(401).send({
-            message: "User_email is not null"
+            message: "FAILED! User_email is not null"
         });
     } else {
         const salt = await bcrypt.genSalt(10);
@@ -136,10 +133,10 @@ const UpdateUsers = async (req, res) => {
         }).then(result => {
             if (result[1][0].length === 0) {
                 return res.status(401)
-                    .send({ message: 'No data changed' });
+                    .send({ message: 'FAILED! No data changed' });
             } else {
                 return res.send({
-                    message: "Data updated successfully",
+                    message: "SUCCESS! Data updated successfully",
                     results: result[1][0]
                 });
             }
@@ -149,6 +146,31 @@ const UpdateUsers = async (req, res) => {
                     error: err.name,
                     message: err.message
                 });
+        });
+    }
+}
+
+const DeleteUsers = async (req, res) => {
+    const id = req.params.id;
+    const userID = await models.users.findByPk(id);
+    if (userID) {
+        await models.users.destroy({
+            where: { user_id: id }
+        }).then(id => {
+            return res.send({
+                message: "SUCCESS! Data deleted successfully",
+                user_id: id
+            });
+        }).catch(err => {
+            return res.status(500)
+                .send({
+                    error: err.name,
+                    message: err.message
+                });
+        });
+    } else {
+        return res.status(404).send({
+            message: "FAILED! Data not found"
         });
     }
 }
@@ -163,16 +185,11 @@ const findAllRowsByUsername = async (callback, users) => {
     });
 }
 
-// export default {
-//     CreateUsers,
-//     findAllUsers,
-//     findAllRowsByUsername
-// }
-
 module.exports = {
     CreateUsers,
     findAllUsers,
     findUsersRowsById,
     UpdateUsers,
+    DeleteUsers,
     findAllRowsByUsername
 }
