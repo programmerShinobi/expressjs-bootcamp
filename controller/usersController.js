@@ -22,11 +22,10 @@ const CreateUsers = async (req, res) => {
             results: result
         });
     }).catch(err => {
-        return res.status(500)
-            .send({
-                error: err.name,
-                message: err.message
-            });
+        return res.status(500).send({
+            error: err.name,
+            message: err.message
+        });
     });
 }
 
@@ -39,11 +38,26 @@ const findAllUsers = async (req, res) => {
             })
         })
         .catch(err => {
-            return res.status(500)
-                .send({
-                    error: err.name,
-                    message: err.message
-                });
+            if (err.status == 401) {
+                return res.status(401)
+                    .send({
+                        error: err.name,
+                        message: err.message
+                    });
+            } else if (err.status == 404) {
+                return res.status(404)
+                    .send({
+                        error: err.name,
+                        message: err.message
+                    });
+            } else {
+                return res.status(500)
+                    .send({
+                        error: err.name,
+                        status: err.status,
+                        message: err.message
+                    });
+            }
         });
 }
 
@@ -64,26 +78,16 @@ const findUsersRowsById = async (req, res) => {
         });
 }
 
-const findAllRowsByUsername = async (callback, users) => {
-    await models.users.findAll({
-        where: { username: users }
-    }).then((result) => {
-        return callback(result);
-    }).catch(err => {
-        return console.info(err);
-    });
-}
-
 const UpdateUsers = async (req, res) => {
 
     const salt = await bcrypt.genSalt(10);
     const passHash = await bcrypt.hash(req.body.password, salt);
 
     // const salt = bcrypt.genSaltSync(10);
-    // const passHash = bcrypt.hashSync(req.body.user_password, salt);
+    // const passHash = bcrypt.hashSync(req.body.password, salt);
 
     await models.users.update({
-        usersname: req.body.username,
+        username: req.body.username,
         password: passHash,
         user_firstname: req.body.user_firstname,
         user_middlename: req.body.user_middlename,
@@ -93,16 +97,27 @@ const UpdateUsers = async (req, res) => {
         returning: true,
         where: { user_id: req.params.id }
     }).then(result => {
-        if (result[1][0].length === 0) {
-            return res.status(400).send('No data changed');
-        }
         return res.send({
             message: "Data updated successfully",
             results: result[1][0]
         })
     }).catch(err => {
-        return err.message
-    })
+        return res.status(500)
+            .send({
+                error: err.name,
+                message: err.message
+            });
+    });
+}
+
+const findAllRowsByUsername = async (callback, users) => {
+    await models.users.findAll({
+        where: { username: users }
+    }).then((result) => {
+        return callback(result);
+    }).catch(err => {
+        return console.info(err);
+    });
 }
 
 // export default {
