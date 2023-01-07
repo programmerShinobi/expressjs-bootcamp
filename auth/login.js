@@ -3,12 +3,11 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import ResponseHelper from "../helpers/ResponseHelper";
 
-const userLogin = async (req, res) => {
+const userLogin = (req, res) => {
     let data = req.body;
-    // let items = await usersController.findAllRowsByUsername2(data.username);
-    await usersController.findAllRowsByUsername2(data.username).then(async items => {
-        const payload = items;
-        if (items.username) {
+    usersController.findAllRowsByUsername(function (items) {
+        const payload = items[0];
+        if (items.length > 0) {
             if (bcrypt.compareSync(data.password, payload.password)) {
 
                 var token = jwt.sign({
@@ -35,7 +34,7 @@ const userLogin = async (req, res) => {
             ResponseHelper.sendResponse(res, 404); // "User not found" --- Not Found
 
         }
-    }).catch(err => { res.status(404).json(err) });
+    }, data.username);
 };
 
 function verifyUser(req, res, next) {

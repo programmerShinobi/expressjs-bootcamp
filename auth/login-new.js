@@ -3,9 +3,10 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import ResponseHelper from "../helpers/ResponseHelper";
 
-const userLogin = (req, res) => {
+const userLogin = async (req, res) => {
     let data = req.body;
-    usersController.findAllRowsByUsername(function (items) {
+    // let items = await usersController.findAllRowsByUsername2(data.username);
+    await usersController.findAllRowsByUsername2(data.username).then(async items => {
         const payload = items[0];
         if (items.length > 0) {
             if (bcrypt.compareSync(data.password, payload.password)) {
@@ -34,7 +35,7 @@ const userLogin = (req, res) => {
             ResponseHelper.sendResponse(res, 404); // "User not found" --- Not Found
 
         }
-    }, data.username);
+    }).catch(err => { res.status(404).json(err) });
 };
 
 function verifyUser(req, res, next) {
