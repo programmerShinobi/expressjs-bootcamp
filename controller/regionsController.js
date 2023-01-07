@@ -1,21 +1,36 @@
 import models, { sequelize } from "../models/init-models";
 
 const CreateRegions = async (req, res) => {
-    await models.regions.create({
-        region_id: req.body.region_id,
-        region_name: req.body.region_name
-    }).then(result => {
-        return res.send({
-            message: "Data inserted successfully",
-            results: result
+    if (req.body.region_id == "") {
+        return res.status(401).send({
+            message: "region_id is not null"
         });
-    }).catch(err => {
-        return res.status(500)
-            .send({
-                error: err.name,
-                message: err.message
-            });
-    });
+    } else if (req.body.region_name == "") {
+        return res.status(401).send({
+            message: "region_name is not null"
+        });
+    } else {
+        await models.regions.create({
+            region_id: req.body.region_id,
+            region_name: req.body.region_name
+        }).then(result => {
+            if (result.length === 0) {
+                return res.status(401)
+                    .send({ message: 'No data changed' });
+            } else {
+                return res.send({
+                    message: "Data inserted successfully",
+                    results: result
+                });
+            }
+        }).catch(err => {
+            return res.status(500)
+                .send({
+                    error: err.name,
+                    message: err.message
+                });
+        });
+    }
 
 }
 
@@ -25,10 +40,16 @@ const findAllRegions = async (req, res) => {
         model: models.regions,
         mapToModel: true
     }).then(result => {
-        return res.send({
-            message: "Data displayed successfully",
-            results: result
-        });
+        if (result == 0 || result == null) {
+            return res.status(404).send({
+                message: "Data not found"
+            });
+        } else {
+            return res.send({
+                message: "Data displayed successfully",
+                results: result
+            });
+        }
     }).catch(err => {
         return res.status(500)
             .send({
@@ -41,10 +62,16 @@ const findAllRegions = async (req, res) => {
 const findAllRegionsRows = async (req, res) => {
     await models.regions.findAll()
         .then(result => {
-            return res.send({
-                message: "Data displayed successfully",
-                results: result
-            });
+            if (result == 0 || result == null) {
+                return res.status(404).send({
+                    message: "Data not found"
+                });
+            } else {
+                return res.send({
+                    message: "Data displayed successfully",
+                    results: result
+                });
+            }
         }).catch(err => {
             return res.status(500)
                 .send({
@@ -62,12 +89,38 @@ const findRegionRowsById = async (req, res) => {
             return res.status(404).send({
                 message: "Data not found"
             });
+        } else {
+            return res.send({
+                message: "Data displayed successfully",
+                results: result
+            });
         }
+    }).catch(err => {
+        return res.status(500)
+            .send({
+                error: err.name,
+                message: err.message
+            });
+    });
+}
 
-        return res.send({
-            message: "Data displayed successfully",
-            results: result
-        });
+const regionJoinCountries = async (req, res) => {
+    await models.regions.findAll({
+        include: [{
+            model: models.countries,
+            as: "countries"
+        }]
+    }).then(result => {
+        if (result == 0 || result == null) {
+            return res.status(404).send({
+                message: "Data not found"
+            });
+        } else {
+            return res.send({
+                message: "Data displayed successfully",
+                results: result
+            });
+        }
     }).catch(err => {
         return res.status(500)
             .send({
@@ -78,27 +131,38 @@ const findRegionRowsById = async (req, res) => {
 }
 
 const UpdateRegions = async (req, res) => {
-    await models.regions.update({
-        region_name: req.body.region_name
-    }, {
-        returning: true,
-        where: { region_id: req.params.id }
-    }).then(result => {
-        if (result[1][0].length === 0) {
-            return res.status(401)
-                .send({ message: 'No data changed' });
-        }
-        return res.send({
-            message: "Data updated successfully",
-            results: result[1][0]
+    if (req.body.region_id == "") {
+        return res.status(401).send({
+            message: "region_id is not null"
         });
-    }).catch(err => {
-        return res.status(500)
-            .send({
-                error: err.name,
-                message: err.message
-            });
-    });
+    } else if (req.body.region_name == "") {
+        return res.status(401).send({
+            message: "region_name is not null"
+        });
+    } else {
+        await models.regions.update({
+            region_name: req.body.region_name
+        }, {
+            returning: true,
+            where: { region_id: req.params.id }
+        }).then(result => {
+            if (result[1][0].length === 0) {
+                return res.status(401)
+                    .send({ message: 'No data changed' });
+            } else {
+                return res.send({
+                    message: "Data updated successfully",
+                    results: result[1][0]
+                });
+            }
+        }).catch(err => {
+            return res.status(500)
+                .send({
+                    error: err.name,
+                    message: err.message
+                });
+        });
+    }
 
 }
 
@@ -120,35 +184,12 @@ const DeleteRegions = async (req, res) => {
     });
 }
 
-
-const regionJoinCountries = async (req, res) => {
-    try {
-        const result = await models.regions.findAll({
-            include: [{
-                model: models.countries,
-                as: "countries"
-            }]
-        });
-
-        return res.send({
-            message: "Succeed displays all data join to countries",
-            results: result[0]
-        });
-    } catch (err) {
-        return res.status(500)
-            .send({
-                error: err.name,
-                message: err.message
-            });
-    }
-}
-
 export default {
+    CreateRegions,
     findAllRegions,
     findAllRegionsRows,
-    CreateRegions,
-    UpdateRegions,
+    regionJoinCountries,
     findRegionRowsById,
+    UpdateRegions,
     DeleteRegions,
-    regionJoinCountries
 }
