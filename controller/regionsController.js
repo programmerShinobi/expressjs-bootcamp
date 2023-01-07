@@ -78,30 +78,27 @@ const findRegionRowsById = async (req, res) => {
 }
 
 const UpdateRegions = async (req, res) => {
-    try {
-        const result = await models.regions.update({
-            region_name: req.body.region_name
-        }, {
-            returning: true,
-            where: { region_id: req.params.id }
-        });
-
+    await models.regions.update({
+        region_name: req.body.region_name
+    }, {
+        returning: true,
+        where: { region_id: req.params.id }
+    }).then(result => {
         if (result[1][0].length === 0) {
-            return res.status(400).send('No data changed');
+            return res.status(401)
+                .send({ message: 'No data changed' });
         }
-
-        // return res.send(result);
         return res.send({
             message: "Data updated successfully",
             results: result[1][0]
         });
-    } catch (err) {
+    }).catch(err => {
         return res.status(500)
             .send({
                 error: err.name,
                 message: err.message
             });
-    }
+    });
 
 }
 

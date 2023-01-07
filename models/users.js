@@ -9,16 +9,16 @@ module.exports = function(sequelize, DataTypes) {
     },
     username: {
       type: DataTypes.STRING(60),
-      allowNull: true,
+      allowNull: false,
       unique: "username_u"
     },
     password: {
       type: DataTypes.TEXT,
-      allowNull: true
+      allowNull: false
     },
     user_firstname: {
       type: DataTypes.STRING(150),
-      allowNull: true
+      allowNull: false
     },
     user_middlename: {
       type: DataTypes.STRING(150),
@@ -30,7 +30,7 @@ module.exports = function(sequelize, DataTypes) {
     },
     user_email: {
       type: DataTypes.TEXT,
-      allowNull: true,
+      allowNull: false,
       unique: "user_email_u"
     }
   }, {

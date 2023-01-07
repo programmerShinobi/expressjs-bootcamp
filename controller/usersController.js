@@ -1,3 +1,4 @@
+import e from "express";
 import models, { sequelize } from "../models/init-models";
 import bcrypt from 'bcrypt';
 
@@ -103,6 +104,26 @@ const UpdateUsers = async (req, res) => {
         returning: true,
         where: { user_id: req.params.id }
     }).then(result => {
+        if (result[1][0].length === 0) {
+            return res.status(401)
+                .send({ message: 'No data changed' });
+        } else if (result[1][0].results.username == null) {
+            return res.status(404).send({
+                message: "Username is not null"
+            });
+        } else if (result[1][0].results.password == null) {
+            return res.status(404).send({
+                message: "Password is not null"
+            });
+        } else if (result[1][0].results.user_firstname == null) {
+            return res.status(404).send({
+                message: "User_firstname is not null"
+            });
+        } else if (result[1][0].results.user_email == null) {
+            return res.status(404).send({
+                message: "User_email is not null"
+            });
+        }
         return res.send({
             message: "Data updated successfully",
             results: result[1][0]
