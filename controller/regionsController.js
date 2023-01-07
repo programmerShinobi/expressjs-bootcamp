@@ -168,20 +168,27 @@ const UpdateRegions = async (req, res) => {
 
 const DeleteRegions = async (req, res) => {
     const id = req.params.id;
-    await models.regions.destroy({
-        where: { region_id: id }
-    }).then(id => {
-        return res.send({
-            message: "Data deleted successfully",
-            region_id: id
+    const regionID = models.regions.findByPk(id);
+    if (regionID === 1) {
+        return res.status(404).send({
+            message: "Data not found"
         });
-    }).catch(err => {
-        return res.status(500)
-            .send({
-                error: err.name,
-                message: err.message
+    } else {
+        await models.regions.destroy({
+            where: { region_id: id }
+        }).then(id => {
+            return res.send({
+                message: "Data deleted successfully",
+                region_id: id
             });
-    });
+        }).catch(err => {
+            return res.status(500)
+                .send({
+                    error: err.name,
+                    message: err.message
+                });
+        });
+    }
 }
 
 export default {

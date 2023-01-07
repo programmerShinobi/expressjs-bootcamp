@@ -3,12 +3,8 @@ import regionsController from "../controller/regionsController";
 import usersController from "../controller/usersController";
 import auth from "../auth/login";
 
-// import countriesController from "../controller/countriesController";
-// import departmentsContoller from "../controller/departmentsContoller";
-// import employeesController from "../controller/employeesController";
-// import locationsController from "../controller/locationsController";
-
 const router = new Router();
+
 //auth
 router.post('/login', auth.userLogin);
 
@@ -23,9 +19,9 @@ router.post('/regions', regionsController.CreateRegions);
 router.get('/regions/sql', regionsController.findAllRegions);
 router.get('/regions/', regionsController.findAllRegionsRows);
 router.get('/regions/:id', regionsController.findRegionRowsById);
+router.get('/regions-countries/', regionsController.regionJoinCountries);
 router.put('/regions/:id', regionsController.UpdateRegions);
 router.delete('/regions/:id', regionsController.DeleteRegions);
-router.get('/regions-countries/', regionsController.regionJoinCountries);
 
 
 export default router 
