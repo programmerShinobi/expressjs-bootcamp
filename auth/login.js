@@ -13,8 +13,10 @@ const userLogin = (req, res) => {
                 var token = jwt.sign({
                     user_id: payload.user_id
                 }, process.env.SECRET_KEY, {
-                    // expiresIn: 86400 //24h expired
+                    // expiresIn: '2s' // 2 second expired
                     expiresIn: '2m' // 2 minutes expired
+                    // expiresIn: '2h' // 2 hour expired
+                    // expiresIn: 86400 //24h expired
                 });
 
                 delete payload.password;
