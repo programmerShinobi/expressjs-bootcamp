@@ -1,4 +1,3 @@
-import e from "express";
 import models, { sequelize } from "../models/init-models";
 import bcrypt from 'bcrypt';
 
@@ -87,54 +86,101 @@ const findUsersRowsById = async (req, res) => {
 
 const UpdateUsers = async (req, res) => {
 
-    const salt = await bcrypt.genSalt(10);
-    const passHash = await bcrypt.hash(req.body.password, salt);
+    if (req.body.password != "") {
+        const salt = await bcrypt.genSalt(10);
+        const passHash = await bcrypt.hash(req.body.password, salt);
 
-    // const salt = bcrypt.genSaltSync(10);
-    // const passHash = bcrypt.hashSync(req.body.password, salt);
+        //-------------------------------------------------------------
 
-    await models.users.update({
-        username: req.body.username,
-        password: passHash,
-        user_firstname: req.body.user_firstname,
-        user_middlename: req.body.user_middlename,
-        user_lastname: req.body.user_lastname,
-        user_email: req.body.user_email
-    }, {
-        returning: true,
-        where: { user_id: req.params.id }
-    }).then(result => {
-        if (result[1][0].length === 0) {
-            return res.status(401)
-                .send({ message: 'No data changed' });
-        } else if (result[1][0].results.username == null) {
-            return res.status(404).send({
-                message: "Username is not null"
-            });
-        } else if (result[1][0].results.password == null) {
-            return res.status(404).send({
-                message: "Password is not null"
-            });
-        } else if (result[1][0].results.user_firstname == null) {
-            return res.status(404).send({
-                message: "User_firstname is not null"
-            });
-        } else if (result[1][0].results.user_email == null) {
-            return res.status(404).send({
-                message: "User_email is not null"
-            });
-        }
-        return res.send({
-            message: "Data updated successfully",
-            results: result[1][0]
-        })
-    }).catch(err => {
-        return res.status(500)
-            .send({
-                error: err.name,
-                message: err.message
-            });
-    });
+        // const salt = bcrypt.genSaltSync(10);
+        // const passHash = bcrypt.hashSync(req.body.password, salt);
+
+        await models.users.update({
+            username: req.body.username,
+            password: passHash,
+            user_firstname: req.body.user_firstname,
+            user_middlename: req.body.user_middlename,
+            user_lastname: req.body.user_lastname,
+            user_email: req.body.user_email
+        }, {
+            returning: true,
+            where: { user_id: req.params.id }
+        }).then(result => {
+            if (result[1][0].length === 0) {
+                return res.status(401)
+                    .send({ message: 'No data changed' });
+            } else if (result[1][0].username == "") {
+                return res.status(404).send({
+                    message: "Username is not null"
+                });
+            } else if (result[1][0].password == "") {
+                return res.status(404).send({
+                    message: "Password is not null"
+                });
+            } else if (result[1][0].user_firstname == "") {
+                return res.status(404).send({
+                    message: "User_firstname is not null"
+                });
+            } else if (result[1][0].user_email == "") {
+                return res.status(404).send({
+                    message: "User_email is not null"
+                });
+            } else {
+                return res.send({
+                    message: "Data updated successfully",
+                    results: result[1][0]
+                })
+            }
+        }).catch(err => {
+            return res.status(500)
+                .send({
+                    error: err.name,
+                    message: err.message
+                });
+        });
+    } else {
+        await models.users.update({
+            username: req.body.username,
+            user_firstname: req.body.user_firstname,
+            user_middlename: req.body.user_middlename,
+            user_lastname: req.body.user_lastname,
+            user_email: req.body.user_email
+        }, {
+            returning: true,
+            where: { user_id: req.params.id }
+        }).then(result => {
+            if (result[1][0].length === 0) {
+                return res.status(401)
+                    .send({ message: 'No data changed' });
+            } else if (result[1][0].username == "") {
+                return res.status(404).send({
+                    message: "Username is not null"
+                });
+            } else if (result[1][0].user_firstname == "") {
+                return res.status(404).send({
+                    message: "User_firstname is not null"
+                });
+            } else if (result[1][0].user_email == "") {
+                return res.status(404).send({
+                    message: "User_email is not null"
+                });
+            } else {
+                return res.send({
+                    message: "Data updated successfully",
+                    results: result[1][0]
+                })
+            }
+        }).catch(err => {
+            return res.status(500)
+                .send({
+                    error: err.name,
+                    message: err.message
+                });
+        });
+    }
+
+
+
 }
 
 const findAllRowsByUsername = async (callback, users) => {
