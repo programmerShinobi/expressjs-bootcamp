@@ -184,11 +184,21 @@ const findAllRowsByUsername = async (callback, users) => {
     });
 }
 
+const findAllRowsByUsername2 = async (username) => {
+    const result = await models.users.findOne({
+        where: { username: username }
+    }).catch(err => {
+        return err
+    })
+    return result.toJSON();
+}
+
 module.exports = {
     CreateUsers,
     findAllUsers,
     findUsersRowsById,
     UpdateUsers,
     DeleteUsers,
-    findAllRowsByUsername
+    findAllRowsByUsername,
+    findAllRowsByUsername2
 }
