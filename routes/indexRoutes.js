@@ -9,20 +9,19 @@ const router = new Router();
 router.post('/login', auth.userLogin);
 
 // users
-router.post('/users', usersController.CreateUsers);
-router.get('/users', usersController.findAllUsers);
-router.get('/users/:id', usersController.findUsersRowsById);
-router.put('/users/:id', usersController.UpdateUsers);
-router.delete('/users/:id', usersController.DeleteUsers);
+router.post('/users', auth.verifyUser, usersController.CreateUsers);
+router.get('/users', auth.verifyUser, usersController.findAllUsers);
+router.get('/users/:id', auth.verifyUser, usersController.findUsersRowsById);
+router.put('/users/:id', auth.verifyUser, usersController.UpdateUsers);
+router.delete('/users/:id', auth.verifyUser, usersController.DeleteUsers);
 
 // regions
-router.post('/regions', regionsController.CreateRegions);
-router.get('/regions/sql', regionsController.findAllRegions);
-router.get('/regions/', regionsController.findAllRegionsRows);
-router.get('/regions/:id', regionsController.findRegionRowsById);
-router.get('/regions-countries/', regionsController.regionJoinCountries);
-router.put('/regions/:id', regionsController.UpdateRegions);
-router.delete('/regions/:id', regionsController.DeleteRegions);
-
+router.post('/regions', auth.verifyUser, regionsController.CreateRegions);
+router.get('/regions/sql', auth.verifyUser, regionsController.findAllRegions);
+router.get('/regions/', auth.verifyUser, regionsController.findAllRegionsRows);
+router.get('/regions/:id', auth.verifyUser, regionsController.findRegionRowsById);
+router.get('/regions-countries/', auth.verifyUser, regionsController.regionJoinCountries);
+router.put('/regions/:id', auth.verifyUser, regionsController.UpdateRegions);
+router.delete('/regions/:id', auth.verifyUser, regionsController.DeleteRegions);
 
 export default router 

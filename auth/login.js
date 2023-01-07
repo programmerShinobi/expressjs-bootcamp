@@ -1,7 +1,6 @@
 import usersController from "../controller/usersController";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import authConfig from "../config/auth";
 import ResponseHelper from "../helpers/ResponseHelper";
 
 const userLogin = (req, res) => {
@@ -11,10 +10,11 @@ const userLogin = (req, res) => {
         if (items.length > 0) {
             if (bcrypt.compareSync(data.password, payload.password)) {
 
-                var token = 'Bearer ' + jwt.sign({
+                var token = jwt.sign({
                     user_id: payload.user_id
-                }, authConfig.secretkey, {
-                    expiresIn: 86400 //24h expired
+                }, process.env.SECRET_KEY, {
+                    // expiresIn: 86400 //24h expired
+                    expiresIn: '2m' // 2 minutes expired
                 });
 
                 delete payload.password;
@@ -35,6 +35,20 @@ const userLogin = (req, res) => {
     }, data.username);
 };
 
+function verifyUser(req, res, next) {
+    const bearer = req.headers.authorization;
+    jwt.verify(bearer, process.env.SECRET_KEY, (err, data) => {
+        if (err) {
+            console.info(err.message);
+            res.json(err);
+            return
+        }
+        req.body = data;
+        next()
+    });
+}
+
 export default {
-    userLogin
+    userLogin,
+    verifyUser
 };
