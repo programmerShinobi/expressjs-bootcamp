@@ -151,15 +151,14 @@ const UpdateUsers = async (req, res) => {
 }
 
 const DeleteUsers = async (req, res) => {
-    const id = req.params.id;
-    const userID = await models.users.findByPk(id);
+    const userID = await models.users.findByPk(req.params.id);
     if (userID) {
         await models.users.destroy({
-            where: { user_id: id }
-        }).then(id => {
+            where: { user_id: req.params.id }
+        }).then(() => {
             return res.send({
                 message: "SUCCESS! Data deleted successfully",
-                user_id: id
+                user_id: req.params.id
             });
         }).catch(err => {
             return res.status(500)

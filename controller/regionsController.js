@@ -171,15 +171,14 @@ const UpdateRegions = async (req, res) => {
 }
 
 const DeleteRegions = async (req, res) => {
-    // const id = req.params.id;
     const regionID = await models.regions.findByPk(req.params.id);
     if (regionID) {
         await models.regions.destroy({
             where: { region_id: req.params.id }
-        }).then(id => {
+        }).then(() => {
             return res.send({
                 message: "SUCCESS! Data deleted successfully",
-                region_id: id
+                region_id: req.params.id
             });
         }).catch(err => {
             return res.status(500)
