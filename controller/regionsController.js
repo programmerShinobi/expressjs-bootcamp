@@ -48,9 +48,9 @@ const CreateRegions = async (req, res) => {
 
 const findAllRegions = async (req, res) => {
     await sequelize.query('SELECT * FROM regions', {
-        type: sequelize.QueryTypes.SELECT,
-        model: models.regions,
-        mapToModel: true
+        type: sequelize.QueryTypes.SELECT, // # Menentukan bahwa hasil dari query harus diperlakukan sebagai query SELECT.
+        model: models.regions, // # Menentukan model yang akan digunakan untuk baris hasil.
+        mapToModel: true // # Menentukan bahwa setiap baris hasil akan dipetakan ke instance dari model yang ditentukan oleh opsi 'model'.
     }).then(result => {
         if (result == 0 || result == null) {
             return res.status(404).send({
