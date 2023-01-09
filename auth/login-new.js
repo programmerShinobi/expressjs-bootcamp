@@ -6,13 +6,12 @@ import ResponseHelper from "../helpers/ResponseHelper";
 const userLogin = async (req, res) => {
     let data = req.body;
     // let items = await usersController.findAllRowsByUsername2(data.username);
-    await usersController.findAllRowsByUsername2(data.username).then(async items => {
-        const payload = items[0];
-        if (items.length > 0) {
-            if (bcrypt.compareSync(data.password, payload.password)) {
+    await usersController.findAllRowsByUsername2(data.username).then((items) => {
+        if (items.username) {
+            if (bcrypt.compareSync(data.password, items.password)) {
 
                 var token = jwt.sign({
-                    user_id: payload.user_id
+                    user_id: items.user_id
                 }, process.env.SECRET_KEY, {
                     // expiresIn: '2s' // 2 second expired
                     expiresIn: '2m' // 2 minutes expired
@@ -20,9 +19,9 @@ const userLogin = async (req, res) => {
                     // expiresIn: 86400 //24h expired
                 });
 
-                delete payload.password;
+                delete items.password;
                 let result = {
-                    userdata: payload,
+                    userdata: items,
                     accessToken: token
                 };
                 ResponseHelper.sendResponse(res, 200, result); // "Success logged in"
@@ -43,8 +42,8 @@ function verifyUser(req, res, next) {
     jwt.verify(bearer, process.env.SECRET_KEY, (err, data) => {
         if (err) {
             console.info(err.message);
-            res.json(err);
-            return
+            return res.json(err);
+
         }
         req.body = data;
         next()
