@@ -1,7 +1,7 @@
 import { Router } from "express";
 import regionsController from "../controller/regionsController";
 import usersController from "../controller/usersController";
-import auth from "../auth/login-new";
+import auth from "../auth/login-new"; //-- type is : "../auth/login"|"../auth/login-new"
 
 const router = new Router();
 
